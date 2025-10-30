@@ -75,16 +75,16 @@ async function main() {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Write HTML file
-    const htmlContent = generateFullHtml(figmaFile.name, html, css);
-    const htmlPath = path.join(outputDir, 'index.html');
-    fs.writeFileSync(htmlPath, htmlContent);
-    console.log(`✅ Generated: ${htmlPath}`);
-
-    // Write separate CSS file
+    // Write separate CSS file first
     const cssPath = path.join(outputDir, 'styles.css');
     fs.writeFileSync(cssPath, css);
     console.log(`✅ Generated: ${cssPath}`);
+
+    // Write HTML file (links to external CSS)
+    const htmlContent = generateFullHtml(figmaFile.name, html);
+    const htmlPath = path.join(outputDir, 'index.html');
+    fs.writeFileSync(htmlPath, htmlContent);
+    console.log(`✅ Generated: ${htmlPath}`);
 
     console.log('\n✨ Conversion complete!');
     console.log(`📂 Open ${htmlPath} in your browser to view the result.`);
@@ -98,16 +98,14 @@ async function main() {
 /**
  * Generate complete HTML document
  */
-function generateFullHtml(title: string, bodyHtml: string, css: string): string {
+function generateFullHtml(title: string, bodyHtml: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
-  <style>
-${css}
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 ${bodyHtml}
